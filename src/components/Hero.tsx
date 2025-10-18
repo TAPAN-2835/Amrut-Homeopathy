@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const Hero = () => {
@@ -25,7 +25,9 @@ const Hero = () => {
             <p className="text-xl md:text-2xl text-background/90 mb-8 leading-relaxed">
               Experience safe, gentle, and effective treatment for chronic and acute conditions through Classical Homeopathy.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
+
+            {/* Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 flex-wrap">
               <Link to="/contact">
                 <Button
                   size="lg"
@@ -35,6 +37,18 @@ const Hero = () => {
                   <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
+
+              {/* New Call Now Button */}
+              <a href="tel:+919999999999">
+                <Button
+                  size="lg"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg px-8 py-6 group"
+                >
+                  <Phone className="mr-2 w-5 h-5 group-hover:scale-110 transition-transform" />
+                  Call Now
+                </Button>
+              </a>
+
               <Link to="/services">
                 <Button
                   size="lg"
