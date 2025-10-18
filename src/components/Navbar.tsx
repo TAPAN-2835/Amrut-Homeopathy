@@ -36,14 +36,13 @@ const Navbar = () => {
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
-          {/* ✅ Logo replaced with logo.svg */}
+          {/* Logo Section */}
           <Link to="/" className="flex items-center space-x-2">
-          <img
-  src="/logo.png"
-  alt="Amrut Homeopathy Logo"
-  className="w-12 h-12 object-cover rounded-full border-2 border-primary transition-transform duration-300 hover:scale-110"
-/>
-
+            <img
+              src="/logo.png"
+              alt="Amrut Homeopathy Logo"
+              className="w-12 h-12 object-cover rounded-full border-2 border-primary transition-transform duration-300 hover:scale-110"
+            />
             <div className="flex flex-col">
               <span
                 className={`font-heading font-bold text-lg leading-tight transition-colors duration-300 ${
@@ -70,7 +69,7 @@ const Navbar = () => {
             </div>
           </Link>
 
-          {/* Desktop Navigation */}
+          {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
             {navLinks.map((link) => (
               <Link
@@ -94,7 +93,7 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* CTA Button */}
+          {/* Desktop CTA */}
           <div className="hidden md:flex items-center space-x-4">
             <a
               href="tel:+919824961387"
@@ -116,7 +115,7 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Toggle */}
           <button
             className={`md:hidden transition-colors duration-300 ${
               isHomePage
@@ -129,46 +128,54 @@ const Navbar = () => {
             aria-label="Toggle menu"
           >
             {isMobileMenuOpen ? (
-              <X className="w-6 h-6" />
+              <X className="w-7 h-7 transition-transform duration-300 rotate-180" />
             ) : (
-              <Menu className="w-6 h-6" />
+              <Menu className="w-7 h-7 transition-transform duration-300" />
             )}
           </button>
         </div>
 
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-border bg-card">
-            <div className="flex flex-col space-y-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={`font-medium px-4 py-2 rounded-md transition-colors ${
-                    isActive(link.path)
-                      ? "bg-primary text-primary-foreground"
-                      : "text-foreground hover:bg-muted"
-                  }`}
-                >
-                  {link.name}
-                </Link>
-              ))}
-              <a
-                href="tel:+919824961387"
-                className="flex items-center px-4 py-2 text-foreground hover:bg-muted rounded-md"
+        {/* Mobile Menu - Animated */}
+        <div
+          className={`md:hidden transition-all duration-500 ease-in-out overflow-hidden ${
+            isMobileMenuOpen
+              ? "max-h-[500px] opacity-100 mt-2"
+              : "max-h-0 opacity-0"
+          }`}
+        >
+          <div className="flex flex-col bg-card/95 backdrop-blur-md rounded-2xl shadow-xl border border-border py-4 px-5 space-y-3">
+            {navLinks.map((link) => (
+              <Link
+                key={link.path}
+                to={link.path}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`font-medium px-3 py-2 rounded-md transition-all duration-300 ${
+                  isActive(link.path)
+                    ? "bg-primary text-primary-foreground shadow-md"
+                    : "text-foreground hover:bg-muted"
+                }`}
               >
-                <Phone className="w-4 h-4 mr-2" />
-                <span>+91 98249 61387</span>
-              </a>
-              <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)}>
-                <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
-                  Book Appointment
-                </Button>
+                {link.name}
               </Link>
-            </div>
+            ))}
+
+            <div className="h-px bg-border my-2"></div>
+
+            <a
+              href="tel:+919824961387"
+              className="flex items-center px-3 py-2 text-foreground hover:bg-muted rounded-md transition-all duration-300"
+            >
+              <Phone className="w-4 h-4 mr-2" />
+              <span>+91 98249 61387</span>
+            </a>
+
+            <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)}>
+              <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-base">
+                Book Appointment
+              </Button>
+            </Link>
           </div>
-        )}
+        </div>
       </div>
     </nav>
   );

@@ -19,12 +19,13 @@ const Hero = () => {
       <div className="container mx-auto px-4 relative z-10 pt-20">
         <div className="max-w-3xl">
           <div className="slide-up">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-heading font-bold text-background mb-6 leading-tight">
+            <h1 className="mt-6 md:mt-10 text-5xl md:text-6xl lg:text-7xl font-heading font-bold text-background mb-6 leading-tight">
               A Pathway to <span className="text-secondary">Holistic Healing</span>
             </h1>
             <p className="text-xl md:text-2xl text-background/90 mb-8 leading-relaxed">
               Experience safe, gentle, and effective treatment for chronic and acute conditions through Classical Homeopathy.
             </p>
+
             <div className="flex flex-col sm:flex-row gap-4">
               <Link to="/contact">
                 <Button
@@ -35,6 +36,7 @@ const Hero = () => {
                   <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
+
               <Link to="/services">
                 <Button
                   size="lg"
@@ -48,17 +50,23 @@ const Hero = () => {
           </div>
 
           {/* Trust Indicators */}
-          <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12 md:mb-20">
             <div className="bg-background/10 backdrop-blur-md rounded-lg p-6 border border-background/20">
-              <h3 className="text-3xl font-heading font-bold text-secondary mb-2">12+</h3>
+              <h3 className="text-3xl font-heading font-bold text-secondary mb-2">
+                12+
+              </h3>
               <p className="text-background/90">Years of Experience</p>
             </div>
             <div className="bg-background/10 backdrop-blur-md rounded-lg p-6 border border-background/20">
-              <h3 className="text-3xl font-heading font-bold text-secondary mb-2">5000+</h3>
+              <h3 className="text-3xl font-heading font-bold text-secondary mb-2">
+                5000+
+              </h3>
               <p className="text-background/90">Happy Patients</p>
             </div>
             <div className="bg-background/10 backdrop-blur-md rounded-lg p-6 border border-background/20">
-              <h3 className="text-3xl font-heading font-bold text-secondary mb-2">100%</h3>
+              <h3 className="text-3xl font-heading font-bold text-secondary mb-2">
+                100%
+              </h3>
               <p className="text-background/90">Natural Remedies</p>
             </div>
           </div>
