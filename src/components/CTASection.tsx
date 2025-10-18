@@ -23,26 +23,26 @@ const CTASection = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link to="/contact">
-              <Button
-                size="lg"
-                className="bg-background text-primary hover:bg-background/90 text-lg px-8 py-6 group"
-              >
-                <Calendar className="mr-2 w-5 h-5" />
-                Book Appointment Now
-              </Button>
-            </Link>
-            <a href="tel:+919824961387">
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-2 border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary text-lg px-8 py-6"
-              >
-                <Phone className="mr-2 w-5 h-5" />
-                Call +91 98249 61387
-              </Button>
-            </a>
-          </div>
+  <Link to="/contact">
+    <Button
+      size="lg"
+      className="bg-background text-primary hover:bg-background/90 text-lg px-8 py-6 group"
+    >
+      <Calendar className="mr-2 w-5 h-5" />
+      Book Appointment Now
+    </Button>
+  </Link>
+
+  <a href="tel:+919824961387">
+    <Button
+      size="lg"
+      className="bg-background text-primary hover:bg-background/90 text-lg px-8 py-6 group"
+    >
+      <Phone className="mr-2 w-5 h-5" />
+      Call +91 98249 61387
+    </Button>
+  </a>
+</div>
 
           <p className="mt-8 text-primary-foreground/80 text-sm">
             Available Mon-Fri: 10:00 AM - 7:00 PM | Sat: 10:00 AM - 2:00 PM
