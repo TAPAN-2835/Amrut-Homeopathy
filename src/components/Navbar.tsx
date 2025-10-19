@@ -1,184 +1,119 @@
-import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Phone } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import jsPDF from "jspdf";
 
-const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const location = useLocation();
-
-  const isHomePage = location.pathname === "/";
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const navLinks = [
-    { name: "Home", path: "/" },
-    { name: "About", path: "/about" },
-    { name: "Services", path: "/services" },
-    { name: "Gallery", path: "/gallery" },
-    { name: "Contact", path: "/contact" },
-  ];
-
-  const isActive = (path) => location.pathname === path;
-
-  return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-in-out ${
-        isScrolled ? "bg-card/95 shadow-lg backdrop-blur-md" : "bg-transparent"
-      }`}
-    >
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-20">
-          {/* Logo Section */}
-          <Link to="/" className="flex items-center space-x-2">
-            <img
-              src="/logo.png"
-              alt="Amrut Homeopathy Logo"
-              className="w-12 h-12 object-cover rounded-full border-2 border-primary transition-transform duration-300 hover:scale-110"
-            />
-            <div className="flex flex-col">
-              <span
-                className={`font-heading font-bold text-lg leading-tight transition-colors duration-300 ${
-                  isHomePage
-                    ? isScrolled
-                      ? "text-foreground"
-                      : "text-background"
-                    : "text-foreground"
-                }`}
-              >
-                Amrut Homeopathy
-              </span>
-              <span
-                className={`text-xs transition-colors duration-300 ${
-                  isHomePage
-                    ? isScrolled
-                      ? "text-muted-foreground"
-                      : "text-background/80"
-                    : "text-muted-foreground"
-                }`}
-              >
-                Holistic Healing
-              </span>
-            </div>
-          </Link>
-
-          {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={`font-medium transition-colors duration-300 relative ${
-                  isActive(link.path)
-                    ? "text-primary"
-                    : isHomePage
-                    ? isScrolled
-                      ? "text-foreground hover:text-primary"
-                      : "text-background hover:text-secondary"
-                    : "text-foreground hover:text-primary"
-                }`}
-              >
-                {link.name}
-                {isActive(link.path) && (
-                  <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-primary"></span>
-                )}
-              </Link>
-            ))}
-          </div>
-
-          {/* Desktop CTA */}
-          <div className="hidden md:flex items-center space-x-4">
-            <a
-              href="tel:+919824961387"
-              className={`flex items-center transition-colors duration-300 ${
-                isHomePage
-                  ? isScrolled
-                    ? "text-foreground hover:text-primary"
-                    : "text-background hover:text-secondary"
-                  : "text-foreground hover:text-primary"
-              }`}
-            >
-              <Phone className="w-4 h-4 mr-2" />
-              <span className="font-medium">+91 98249 61387</span>
-            </a>
-            <Link to="/contact">
-              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                Book Appointment
-              </Button>
-            </Link>
-          </div>
-
-          {/* Mobile Menu Toggle */}
-          <button
-            className={`md:hidden transition-colors duration-300 ${
-              isHomePage
-                ? isScrolled
-                  ? "text-foreground"
-                  : "text-background"
-                : "text-foreground"
-            }`}
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            {isMobileMenuOpen ? (
-              <X className="w-7 h-7 transition-transform duration-300 rotate-180" />
-            ) : (
-              <Menu className="w-7 h-7 transition-transform duration-300" />
-            )}
-          </button>
-        </div>
-
-        {/* Mobile Menu - Animated */}
-        <div
-          className={`md:hidden transition-all duration-500 ease-in-out overflow-hidden ${
-            isMobileMenuOpen
-              ? "max-h-[500px] opacity-100 mt-2"
-              : "max-h-0 opacity-0"
-          }`}
-        >
-          <div className="flex flex-col bg-card/95 backdrop-blur-md rounded-2xl shadow-xl border border-border py-4 px-5 space-y-3">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`font-medium px-3 py-2 rounded-md transition-all duration-300 ${
-                  isActive(link.path)
-                    ? "bg-primary text-primary-foreground shadow-md"
-                    : "text-foreground hover:bg-muted"
-                }`}
-              >
-                {link.name}
-              </Link>
-            ))}
-
-            <div className="h-px bg-border my-2"></div>
-
-            <a
-              href="tel:+919824961387"
-              className="flex items-center px-3 py-2 text-foreground hover:bg-muted rounded-md transition-all duration-300"
-            >
-              <Phone className="w-4 h-4 mr-2" />
-              <span>+91 98249 61387</span>
-            </a>
-
-            <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)}>
-              <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-base">
-                Book Appointment
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </div>
-    </nav>
-  );
+export type ReceiptData = {
+  token: string;
+  name: string;
+  mobile: string;
+  email?: string;
+  date: string;
+  time: string;
+  concern: string;
+  type: string;
+  message?: string;
 };
 
-export default Navbar;
+async function loadImageAsDataUrl(path: string): Promise<string> {
+  try {
+    const resp = await fetch(path);
+    const blob = await resp.blob();
+    return await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (e) => reject(e);
+      reader.readAsDataURL(blob);
+    });
+  } catch (e) {
+    console.warn("Failed loading image:", e);
+    return "";
+  }
+}
+
+export async function generatePDF(data: ReceiptData) {
+  const doc = new jsPDF({ unit: "pt", format: "a4" });
+
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  let cursorY = 40;
+
+  // === HEADER RECTANGLE ===
+  const headerHeight = 100;
+  doc.setFillColor("#009966");
+  doc.rect(0, cursorY, pageWidth, headerHeight, "F");
+
+  // === LOGO ===
+  const imageDataUrl = await loadImageAsDataUrl("/logo.png");
+  if (imageDataUrl) {
+    const logoSize = 70;
+    const logoX = 50;
+    const logoY = cursorY + (headerHeight - logoSize) / 2;
+    doc.addImage(imageDataUrl, "PNG", logoX, logoY, logoSize, logoSize, undefined, "FAST");
+    // Circular border (simulating rounded-full)
+    doc.setLineWidth(2);
+    doc.setDrawColor(255, 255, 255);
+    doc.circle(logoX + logoSize / 2, logoY + logoSize / 2, logoSize / 2, "S");
+  }
+
+  // === HEADER TEXT ===
+  const textX = 140;
+  const titleY = cursorY + 45;
+  const subtitleY = cursorY + 70;
+
+  doc.setTextColor(255, 255, 255);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(20);
+  doc.text("Amrut Homeopathy", textX, titleY);
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(14);
+  doc.text("Holistic Healing", textX, subtitleY);
+
+  cursorY += headerHeight + 40; // move below header
+
+  // === RECEIPT TITLE ===
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(18);
+  doc.setTextColor(0, 0, 0);
+  doc.text("Appointment Receipt", pageWidth / 2, cursorY, { align: "center" });
+  cursorY += 25;
+
+  // === TOKEN ID ===
+  doc.setFontSize(16);
+  doc.text(`Token ID: ${data.token}`, pageWidth / 2, cursorY, { align: "center" });
+  cursorY += 35;
+
+  // === DETAILS SECTION ===
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(12);
+
+  const leftX = 60;
+  const labelGap = 130;
+  const lineGap = 22;
+  const details: [string, string][] = [
+    ["Full Name", data.name],
+    ["Mobile", data.mobile],
+    ["Email", data.email || "-"],
+    ["Appointment Date", data.date],
+    ["Preferred Time", data.time],
+    ["Primary Concern", data.concern],
+    ["Patient Type", data.type],
+    ["Additional Message", data.message || "-"],
+  ];
+
+  details.forEach(([label, value]) => {
+    doc.setFont("helvetica", "bold");
+    doc.text(`${label}:`, leftX, cursorY);
+    doc.setFont("helvetica", "normal");
+    const wrapped = doc.splitTextToSize(value, pageWidth - leftX - labelGap - 40);
+    doc.text(wrapped, leftX + labelGap, cursorY);
+    cursorY += Math.max(lineGap, wrapped.length * 14);
+  });
+
+  // === FOOTER ===
+  const footerY = pageHeight - 40;
+  doc.setFont("helvetica", "italic");
+  doc.setFontSize(11);
+  doc.setTextColor(100, 100, 100);
+  doc.text("Amrut Homeopathy – Thank you for booking!", pageWidth / 2, footerY, { align: "center" });
+
+  doc.save(`Amrut_Appointment_${data.token}.pdf`);
+}
