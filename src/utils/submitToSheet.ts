@@ -15,7 +15,10 @@ export type SubmitResult = {
   token: string;
 };
 
-const API_ENDPOINT = "/api/submit";
+const API_ENDPOINT =
+  import.meta.env.DEV
+    ? "/api/submit" // ✅ use proxy in dev
+    : "/api/submit"; // ✅ same in production (handled by Vercel)
 
 function generateToken(): string {
   const num = Math.floor(Math.random() * 10000);
