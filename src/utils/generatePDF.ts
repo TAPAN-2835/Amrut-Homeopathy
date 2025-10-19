@@ -13,7 +13,6 @@ export type ReceiptData = {
 };
 
 async function loadImageAsDataUrl(path: string): Promise<string> {
-  // Attempt to load as given (webp); jsPDF addImage supports webp in recent versions
   try {
     const resp = await fetch(path);
     const blob = await resp.blob();
@@ -33,37 +32,63 @@ export async function generatePDF(data: ReceiptData) {
   const doc = new jsPDF({ unit: "pt", format: "a4" });
 
   const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
   let cursorY = 40;
 
-  // Header image
-  const imageDataUrl = await loadImageAsDataUrl("/g8.webp");
+  // === HEADER RECTANGLE ===
+  const headerHeight = 100;
+  doc.setFillColor("#009966");
+  doc.rect(0, cursorY, pageWidth, headerHeight, "F");
+
+  // === LOGO ===
+  const imageDataUrl = await loadImageAsDataUrl("/logo.png");
   if (imageDataUrl) {
-    // Fit width keeping aspect ratio; assume approx 3:1 banner height if unknown
-    const imgWidth = pageWidth - 80;
-    const imgHeight = 120;
-    doc.addImage(imageDataUrl, "WEBP", 40, cursorY, imgWidth, imgHeight);
-    cursorY += imgHeight + 20;
+    const logoSize = 70;
+    const logoX = 50;
+    const logoY = cursorY + (headerHeight - logoSize) / 2;
+    doc.addImage(imageDataUrl, "PNG", logoX, logoY, logoSize, logoSize, undefined, "FAST");
+    // Circular border (simulating rounded-full)
+    doc.setLineWidth(2);
+    doc.setDrawColor(255, 255, 255);
+    doc.circle(logoX + logoSize / 2, logoY + logoSize / 2, logoSize / 2, "S");
   }
 
-  // Title and token
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(18);
-  doc.text("Amrut Homeopathy - Appointment Receipt", pageWidth / 2, cursorY, { align: "center" });
-  cursorY += 26;
+  // === HEADER TEXT ===
+  const textX = 140;
+  const titleY = cursorY + 45;
+  const subtitleY = cursorY + 70;
 
+  doc.setTextColor(255, 255, 255);
+  doc.setFont("helvetica", "bold");
   doc.setFontSize(20);
-  doc.setTextColor(30, 30, 30);
-  doc.text(`Token ID: ${data.token}`, pageWidth / 2, cursorY, { align: "center" });
-  cursorY += 24;
+  doc.text("Amrut Homeopathy", textX, titleY);
 
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(12);
+  doc.setFontSize(14);
+  doc.text("Holistic Healing", textX, subtitleY);
+
+  cursorY += headerHeight + 40; // move below header
+
+  // === RECEIPT TITLE ===
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(18);
   doc.setTextColor(0, 0, 0);
+  doc.text("Appointment Receipt", pageWidth / 2, cursorY, { align: "center" });
+  cursorY += 25;
 
-  const lineGap = 18;
+  // === TOKEN ID ===
+  doc.setFontSize(16);
+  doc.text(`Token ID: ${data.token}`, pageWidth / 2, cursorY, { align: "center" });
+  cursorY += 35;
+
+  // === DETAILS SECTION ===
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(12);
+
   const leftX = 60;
-
-  const lines: Array<[string, string]> = [
+  const labelGap = 130;
+  const lineGap = 22;
+  const details: [string, string][] = [
     ["Full Name", data.name],
     ["Mobile", data.mobile],
     ["Email", data.email || "-"],
@@ -71,23 +96,23 @@ export async function generatePDF(data: ReceiptData) {
     ["Preferred Time", data.time],
     ["Primary Concern", data.concern],
     ["Patient Type", data.type],
-    ["Additional Message", data.message || "-"]
+    ["Additional Message", data.message || "-"],
   ];
 
-  lines.forEach(([label, value]) => {
+  details.forEach(([label, value]) => {
     doc.setFont("helvetica", "bold");
     doc.text(`${label}:`, leftX, cursorY);
     doc.setFont("helvetica", "normal");
-    const maxTextWidth = pageWidth - leftX - 60;
-    const wrapped = doc.splitTextToSize(value, maxTextWidth);
-    doc.text(wrapped, leftX + 130, cursorY);
-    cursorY += Math.max(lineGap, wrapped.length * 14 + 4);
+    const wrapped = doc.splitTextToSize(value, pageWidth - leftX - labelGap - 40);
+    doc.text(wrapped, leftX + labelGap, cursorY);
+    cursorY += Math.max(lineGap, wrapped.length * 14);
   });
 
-  // Footer
-  const footerY = doc.internal.pageSize.getHeight() - 40;
+  // === FOOTER ===
+  const footerY = pageHeight - 40;
   doc.setFont("helvetica", "italic");
-  doc.setTextColor(80, 80, 80);
+  doc.setFontSize(11);
+  doc.setTextColor(100, 100, 100);
   doc.text("Amrut Homeopathy – Thank you for booking!", pageWidth / 2, footerY, { align: "center" });
 
   doc.save(`Amrut_Appointment_${data.token}.pdf`);
