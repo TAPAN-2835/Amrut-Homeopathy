@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Award, Heart, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import doctorImage from "@/assets/doctor-portrait.jpg";
 
 const AboutPreview = () => {
   const features = [
@@ -30,12 +29,16 @@ const AboutPreview = () => {
           <div className="relative">
             <div className="relative rounded-2xl overflow-hidden shadow-2xl">
               <img
-                src={doctorImage}
+                src="/avatar.webp"
                 alt="Dr. Birju Patel - Homeopathic Doctor"
-                className="w-full h-auto object-cover"
+                loading="lazy"
+                decoding="async"
+                className="w-full h-auto object-cover transition-opacity duration-700 opacity-0"
+                onLoad={(e) => (e.currentTarget.style.opacity = 1)}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-foreground/50 to-transparent"></div>
             </div>
+
             {/* Floating Badge */}
             <div className="absolute -bottom-6 -right-6 bg-primary text-primary-foreground rounded-xl p-6 shadow-xl">
               <div className="text-center">
@@ -70,7 +73,9 @@ const AboutPreview = () => {
                   <h3 className="font-heading font-semibold text-foreground mb-1">
                     {feature.title}
                   </h3>
-                  <p className="text-sm text-muted-foreground">{feature.description}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {feature.description}
+                  </p>
                 </div>
               ))}
             </div>

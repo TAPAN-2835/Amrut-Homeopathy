@@ -2,7 +2,6 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Award, Heart, Shield, Target } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import doctorImage from "@/assets/doctor-portrait.jpg";
 import Testimonials from "@/components/Testimonials";
 
 const About = () => {
@@ -10,29 +9,33 @@ const About = () => {
     {
       icon: Heart,
       title: "Personalized Care",
-      description: "Every patient receives individualized treatment plans based on their unique constitution and symptoms.",
+      description:
+        "Every patient receives individualized treatment plans based on their unique constitution and symptoms.",
     },
     {
       icon: Shield,
       title: "Natural & Safe Remedies",
-      description: "We use 100% natural homeopathic medicines with no side effects, suitable for all ages.",
+      description:
+        "We use 100% natural homeopathic medicines with no side effects, suitable for all ages.",
     },
     {
       icon: Target,
       title: "Long-Term Relief",
-      description: "Focus on treating the root cause rather than just symptoms for lasting health benefits.",
+      description:
+        "Focus on treating the root cause rather than just symptoms for lasting health benefits.",
     },
     {
       icon: Award,
       title: "Experienced Practitioner",
-      description: "Over 12 years of dedicated practice in classical homeopathy with proven results.",
+      description:
+        "Over 12 years of dedicated practice in classical homeopathy with proven results.",
     },
   ];
 
   return (
     <div className="min-h-screen">
       <Navbar />
-      
+
       {/* Hero Section */}
       <section className="pt-32 pb-20 bg-gradient-to-br from-primary/5 via-secondary/5 to-background">
         <div className="container mx-auto px-4">
@@ -70,16 +73,21 @@ const About = () => {
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
+            {/* Doctor Image */}
             <div className="relative">
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                 <img
-                  src={doctorImage}
+                  src="/avatar.webp"
                   alt="Dr. Birju Patel - Homeopathic Doctor"
-                  className="w-full h-auto object-cover"
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-auto object-cover transition-opacity duration-700 opacity-0"
+                  onLoad={(e) => (e.currentTarget.style.opacity = 1)}
                 />
               </div>
             </div>
 
+            {/* Doctor Info */}
             <div>
               <h2 className="text-4xl font-heading font-bold text-foreground mb-6">
                 Dr. Birju Patel

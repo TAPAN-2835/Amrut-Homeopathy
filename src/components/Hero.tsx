@@ -5,13 +5,21 @@ import { Button } from "@/components/ui/button";
 const Hero = () => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Image with Overlay */}
+      {/* Background Images with Overlay */}
       <div className="absolute inset-0 z-0">
+        {/* Landscape image for larger screens */}
         <img
-          src="/g4.jpg"
+          src="/g4.webp"
           alt="Amrut Homeopathy Clinic"
-          className="w-full h-full object-cover"
+          className="hidden sm:block w-full h-full object-cover"
         />
+        {/* Portrait image for mobile screens (focus left) */}
+        <img
+          src="/g7.webp"
+          alt="Amrut Homeopathy Clinic"
+          className="block sm:hidden w-full h-full object-cover object-left"
+        />
+        {/* Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-foreground/90 via-foreground/70 to-foreground/50"></div>
       </div>
 
@@ -20,10 +28,12 @@ const Hero = () => {
         <div className="max-w-3xl">
           <div className="slide-up">
             <h1 className="mt-6 md:mt-10 text-5xl md:text-6xl lg:text-7xl font-heading font-bold text-background mb-6 leading-tight">
-              A Pathway to <span className="text-secondary">Holistic Healing</span>
+              A Pathway to{" "}
+              <span className="text-secondary">Holistic Healing</span>
             </h1>
             <p className="text-xl md:text-2xl text-background/90 mb-8 leading-relaxed">
-              Experience safe, gentle, and effective treatment for chronic and acute conditions through Classical Homeopathy.
+              Experience safe, gentle, and effective treatment for chronic and
+              acute conditions through Classical Homeopathy.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
