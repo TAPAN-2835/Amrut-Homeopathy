@@ -16,11 +16,33 @@ import {
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { submitToSheet, mapPatientType } from "@/utils/submitToSheet";
+import { generatePDF } from "@/utils/generatePDF";
 
 const Contact = () => {
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccessOpen, setIsSuccessOpen] = useState(false);
+  const [generatedToken, setGeneratedToken] = useState<string | null>(null);
+  const [submittedData, setSubmittedData] = useState<{
+    name: string;
+    mobile: string;
+    email?: string;
+    date: string;
+    time: string;
+    concern: string;
+    type: string;
+    message?: string;
+  } | null>(null);
   const [formData, setFormData] = useState({
     fullName: "",
     mobile: "",
@@ -90,14 +112,30 @@ const Contact = () => {
       return;
     }
 
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const payload = {
+        name: formData.fullName,
+        mobile: formData.mobile,
+        email: formData.email || undefined,
+        date: formData.date,
+        time: formData.timeSlot,
+        concern: formData.concern,
+        type: mapPatientType(formData.patientType),
+        message: formData.message || undefined,
+      };
+
+      const result = await submitToSheet(payload);
+
+      setGeneratedToken(result.token);
+      setSubmittedData(payload);
+
+      setIsSuccessOpen(true);
       toast({
         title: "Appointment Booked Successfully! ✓",
-        description: "You'll receive confirmation shortly. We look forward to seeing you!",
+        description: `Your Token ID is ${result.token}`,
       });
-      
-      // Reset form
+
+      // Reset form for next booking
       setFormData({
         fullName: "",
         mobile: "",
@@ -108,8 +146,12 @@ const Contact = () => {
         message: "",
         patientType: "new",
       });
+    } catch (err: any) {
+      const message = typeof err?.message === "string" ? err.message : "Something went wrong. Please try again.";
+      toast({ title: "Booking Failed", description: message, variant: "destructive" });
+    } finally {
       setIsSubmitting(false);
-    }, 1500);
+    }
   };
 
   const handleChange = (field: string, value: string) => {
@@ -364,6 +406,30 @@ const Contact = () => {
       </section>
 
       <Footer />
+
+      {/* Success Modal */}
+      <Dialog open={isSuccessOpen} onOpenChange={setIsSuccessOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>✅ Appointment Booked Successfully</DialogTitle>
+            <DialogDescription>
+              Your Token ID: {" "}
+              <span className="font-bold text-lg">{generatedToken}</span>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              onClick={async () => {
+                if (!generatedToken || !submittedData) return;
+                await generatePDF({ token: generatedToken, ...submittedData });
+              }}
+              className="bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              Download Receipt (PDF)
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
