@@ -1,4 +1,4 @@
-// Utilities to submit appointment data to Google Apps Script-backed Google Sheet
+// Utilities to submit appointment data via Vercel API proxy to Google Sheet
 
 export type AppointmentSubmission = {
   name: string;
@@ -15,7 +15,7 @@ export type SubmitResult = {
   token: string;
 };
 
-const SHEET_URL: string | undefined = (import.meta as any).env?.VITE_SHEET_URL;
+const API_ENDPOINT = "/api/submit";
 
 function generateToken(): string {
   const num = Math.floor(Math.random() * 10000);
@@ -23,19 +23,17 @@ function generateToken(): string {
   return `AH${fourDigits}`;
 }
 
-async function postToSheet(
-  url: string,
+async function postToApi(
   payload: Record<string, unknown>,
-): Promise<{ status: string; message?: string }>
+): Promise<{ status: string; message?: string } | { error: string }>
 {
-  const response = await fetch(url, {
+  const response = await fetch(API_ENDPOINT, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
-    // Google Apps Script Web Apps typically don't require credentials for public access
   });
 
-  // Google Apps Script Web App often returns 200 even on errors encoded in JSON
+  // API returns JSON with { status: "success" | "error", ... } forwarded from Apps Script
   const text = await response.text();
   try {
     const json = JSON.parse(text);
@@ -52,16 +50,9 @@ async function postToSheet(
  */
 export async function submitToSheet(
   data: AppointmentSubmission,
-  options?: { maxRetries?: number; sheetUrlOverride?: string },
+  options?: { maxRetries?: number },
 ): Promise<SubmitResult> {
   const maxRetries = options?.maxRetries ?? 6;
-  const url = options?.sheetUrlOverride ?? SHEET_URL;
-
-  if (!url) {
-    throw new Error(
-      "Missing VITE_SHEET_URL. Please set your Google Apps Script Web App URL in .env as VITE_SHEET_URL.",
-    );
-  }
 
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     const token = generateToken();
@@ -77,19 +68,25 @@ export async function submitToSheet(
       message: data.message ?? "",
     };
 
-    const result = await postToSheet(url, payload);
+    const result = await postToApi(payload);
 
-    if (result.status === "success") {
+    if ((result as any).status === "success") {
       return { token };
     }
 
-    if (result.status === "error" && /duplicate token/i.test(result.message ?? "")) {
+    if ((result as any).status === "error" && /duplicate token/i.test((result as any).message ?? "")) {
       // Try again with a new token
       continue;
     }
 
     // Unexpected error
-    throw new Error(result.message || "Unknown error while submitting to sheet.");
+    if ((result as any).message) {
+      throw new Error((result as any).message);
+    }
+    if ((result as any).error) {
+      throw new Error((result as any).error);
+    }
+    throw new Error("Unknown error while submitting to sheet.");
   }
 
   throw new Error("Could not generate a unique token after several attempts. Please try again.");
